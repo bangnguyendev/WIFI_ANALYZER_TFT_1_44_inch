@@ -17,7 +17,6 @@
 // For ST7735-based displays, we will use this call
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
 // yield(); // https://forum.arduino.cc/t/soft-wdt-reset-nodemcu/425567/2
-char string_tft[50] = "";
 /*  End TFT 1.44 inch   */
 
 #define WIDTH 128
@@ -52,9 +51,6 @@ uint16_t channel_color[] = {
   TFT_RED, TFT_YELLOW, TFT_GREEN,
 };
 
-uint8_t scan_count = 0;
-
-
 void setup() {
   Serial.begin(115200);
   // Initialize LED_BUILTIN
@@ -68,7 +64,7 @@ void setup() {
   tft.setTextWrap(false);
   tft.setTextColor(ST77XX_WHITE, TFT_RED);
   tft.print(" ESP");
-  tft.setTextColor(ST77XX_WHITE, TFT_ORANGE);
+  tft.setTextColor(ST77XX_BLACK, TFT_ORANGE);
   tft.print("8266");
   tft.setTextColor(ST77XX_BLACK, TFT_GREEN);
   tft.print(" WiFi");
@@ -117,16 +113,25 @@ void loop() {
       Serial.println(rssi);
       int32_t channel = WiFi.channel(i);
       uint16_t color = channel_color[channel - 1];
-
       // Print SSID, signal strengh and if not encrypted
       Serial.println(WiFi.SSID(i));
       tft.setTextColor(color);
-      tft.setCursor(2, BANNER_HEIGHT + templist);
-      tft.print('[');
-      tft.print(channel);
-      tft.print(']');
-      tft.setCursor(27, BANNER_HEIGHT + templist);
-      tft.print(WiFi.SSID(i));
+      if (channel < 10)
+      {
+        tft.setCursor(2, BANNER_HEIGHT + templist);
+        tft.print("[0");
+        tft.print(channel);
+        tft.print("] ");
+      }
+      else{
+        tft.setCursor(2, BANNER_HEIGHT + templist);
+        tft.print("[");
+        tft.print(channel);
+        tft.print("] ");
+      }
+
+      String ssid = WiFi.SSID(i).substring(0, 9);
+      tft.print(ssid);
       tft.print('(');
       tft.print(rssi);
       tft.print(')');
@@ -142,6 +147,14 @@ void loop() {
     // clear old graph
     tft.fillRect(0, BANNER_HEIGHT, 128, 128, TFT_BLACK);
     tft.setTextSize(1);
+
+    // draw number channels base axle
+    tft.drawFastHLine(0, GRAPH_BASELINE - 1, 128, TFT_WHITE);
+    for (int i = 1; i <= 11; i++) {
+      tft.setTextColor(channel_color[i - 1]);
+      tft.setCursor((i * CHANNEL_WIDTH) - ((i < 10)?3:6), GRAPH_BASELINE + 2);
+      tft.print(i);
+    }
 
     // plot found WiFi info
     for (int i = 0; i < n; i++) {
@@ -161,8 +174,8 @@ void loop() {
           max_rssi[channel - 1] = rssi;
         }
 
-        tft.drawLine(channel * CHANNEL_WIDTH, GRAPH_BASELINE - height, (channel - 1) * CHANNEL_WIDTH, GRAPH_BASELINE + 1, color);
-        tft.drawLine(channel * CHANNEL_WIDTH, GRAPH_BASELINE - height, (channel + 1) * CHANNEL_WIDTH, GRAPH_BASELINE + 1, color);
+        tft.drawLine(channel * CHANNEL_WIDTH, GRAPH_BASELINE - height, (channel - 1) * CHANNEL_WIDTH, GRAPH_BASELINE - 3, color);
+        tft.drawLine(channel * CHANNEL_WIDTH, GRAPH_BASELINE - height, (channel + 1) * CHANNEL_WIDTH, GRAPH_BASELINE - 3, color);
 
         // Print SSID, signal strengh and if not encrypted
         tft.setTextColor(color);
@@ -183,8 +196,18 @@ void loop() {
       }
   }
 
+  // draw graph base axle
+  for (int i = 1; i <= 11; i++) {
+    if (ap_count[i - 1] > 0) {
+      tft.setCursor((i * CHANNEL_WIDTH) - ((ap_count[i - 1] < 10)?9:12), GRAPH_BASELINE + 11);
+      tft.print(' ');
+      tft.print(ap_count[i - 1]);
+      tft.print(' ');
+    }
+  }
+
   // print WiFi stat
-  tft.setTextColor(ST77XX_WHITE);
+  tft.setTextColor(ST77XX_WHITE, ST77XX_BLACK);
   tft.setCursor(0, BANNER_HEIGHT);
   tft.print(" Networks found: ");
   tft.print(n);
@@ -206,20 +229,6 @@ void loop() {
           tft.print(i);
         }
       }
-    }
-  }
-
-  // draw graph base axle
-  tft.drawFastHLine(0, GRAPH_BASELINE, 128, TFT_WHITE);
-  for (int i = 1; i <= 11; i++) {
-    tft.setTextColor(channel_color[i - 1]);
-    tft.setCursor((i * CHANNEL_WIDTH) - ((i < 10)?3:6), GRAPH_BASELINE + 2);
-    tft.print(i);
-    if (ap_count[i - 1] > 0) {
-      tft.setCursor((i * CHANNEL_WIDTH) - ((ap_count[i - 1] < 10)?9:12), GRAPH_BASELINE + 11);
-      tft.print(' ');
-      tft.print(ap_count[i - 1]);
-      tft.print(' ');
     }
   }
 
