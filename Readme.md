@@ -7,11 +7,15 @@ This Arduino sketch provides functionality to analyze Wi-Fi networks using an ES
 - 1.44-inch TFT display (ST7735-based)
 - Required Libraries: ESP8266WiFi, Adafruit_GFX, Adafruit_ST7735, SPI
 
-![Ảnh 1](/image/1.jpg)
+![Ảnh 3](/image/Sche.png)
+
+![Ảnh 4](/image/PCB_2D.png)
+
+![Ảnh 5](/image/PCB_3D.png)
 
 ![Ảnh 1](/image/1.jpg)
 
-![Ảnh 1](/image/1.jpg)
+![Ảnh 2](/image/2.jpg)
 
 ### Pin Configuration
 - **TFT 1.44 inch**:
@@ -26,21 +30,25 @@ The sketch utilizes the Adafruit_GFX and Adafruit_ST7735 libraries to display gr
 
 ### Color Legend
 Channel Color Legend:
-Channel 1: TFT_RED
-Channel 2: TFT_YELLOW
-Channel 3: TFT_GREEN
-Channel 4: TFT_CYAN
-Channel 5: TFT_MAGENTA
-Channel 6: TFT_RED
-Channel 7: TFT_YELLOW
-Channel 8: TFT_GREEN
-Channel 9: TFT_CYAN
-Channel 10: TFT_MAGENTA
-Channel 11: TFT_RED
-Channel 12: TFT_YELLOW
-Channel 13: TFT_GREEN
-Channel 14: TFT_CYAN
 
+| Channel | Color       |
+|---------|-------------|
+| 1       | TFT_RED     |
+| 2       | TFT_YELLOW  |
+| 3       | TFT_GREEN   |
+| 4       | TFT_CYAN    |
+| 5       | TFT_MAGENTA |
+| 6       | TFT_RED     |
+| 7       | TFT_YELLOW  |
+| 8       | TFT_GREEN   |
+| 9       | TFT_CYAN    |
+| 10      | TFT_MAGENTA |
+| 11      | TFT_RED     |
+| 12      | TFT_YELLOW  |
+| 13      | TFT_GREEN   |
+| 14      | TFT_CYAN    |
+
+Bạn có thể sử dụng bảng này để tham khảo mã màu tương ứng với từng kênh khi cần.
 ### Functionality
 1. **Initialization**: Initializes the TFT display and sets up the Wi-Fi scanning process.
 2. **Wi-Fi Scanning**: Scans for nearby Wi-Fi networks and displays their information on the screen.
