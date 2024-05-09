@@ -199,6 +199,7 @@ void loop() {
   // draw graph base axle
   for (int i = 1; i <= 11; i++) {
     if (ap_count[i - 1] > 0) {
+      tft.setTextColor(channel_color[i - 1]);
       tft.setCursor((i * CHANNEL_WIDTH) - ((ap_count[i - 1] < 10)?9:12), GRAPH_BASELINE + 11);
       tft.print(' ');
       tft.print(ap_count[i - 1]);
